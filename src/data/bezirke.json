@@ -1,0 +1,117 @@
+[
+  {
+    "number": 1,
+    "name": "Innere Stadt",
+    "postalCode": "1010"
+  },
+  {
+    "number": 2,
+    "name": "Leopoldstadt",
+    "postalCode": "1020"
+  },
+  {
+    "number": 3,
+    "name": "Landstraße",
+    "postalCode": "1030"
+  },
+  {
+    "number": 4,
+    "name": "Wieden",
+    "postalCode": "1040"
+  },
+  {
+    "number": 5,
+    "name": "Margareten",
+    "postalCode": "1050"
+  },
+  {
+    "number": 6,
+    "name": "Mariahilf",
+    "postalCode": "1060"
+  },
+  {
+    "number": 7,
+    "name": "Neubau",
+    "postalCode": "1070"
+  },
+  {
+    "number": 8,
+    "name": "Josefstadt",
+    "postalCode": "1080"
+  },
+  {
+    "number": 9,
+    "name": "Alsergrund",
+    "postalCode": "1090"
+  },
+  {
+    "number": 10,
+    "name": "Favoriten",
+    "postalCode": "1100"
+  },
+  {
+    "number": 11,
+    "name": "Simmering",
+    "postalCode": "1110"
+  },
+  {
+    "number": 12,
+    "name": "Meidling",
+    "postalCode": "1120"
+  },
+  {
+    "number": 13,
+    "name": "Hietzing",
+    "postalCode": "1130"
+  },
+  {
+    "number": 14,
+    "name": "Penzing",
+    "postalCode": "1140"
+  },
+  {
+    "number": 15,
+    "name": "Rudolfsheim-Fünfhaus",
+    "postalCode": "1150"
+  },
+  {
+    "number": 16,
+    "name": "Ottakring",
+    "postalCode": "1160"
+  },
+  {
+    "number": 17,
+    "name": "Hernals",
+    "postalCode": "1170"
+  },
+  {
+    "number": 18,
+    "name": "Währing",
+    "postalCode": "1180"
+  },
+  {
+    "number": 19,
+    "name": "Döbling",
+    "postalCode": "1190"
+  },
+  {
+    "number": 20,
+    "name": "Brigittenau",
+    "postalCode": "1200"
+  },
+  {
+    "number": 21,
+    "name": "Floridsdorf",
+    "postalCode": "1210"
+  },
+  {
+    "number": 22,
+    "name": "Donaustadt",
+    "postalCode": "1220"
+  },
+  {
+    "number": 23,
+    "name": "Liesing",
+    "postalCode": "1230"
+  }
+]

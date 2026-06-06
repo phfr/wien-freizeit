@@ -1,0 +1,182 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+}
+
+:root {
+  --background: #faf8f5;
+  --foreground: #1f1a17;
+  --card: #ffffff;
+  --card-foreground: #1f1a17;
+  --primary: #c8102e;
+  --primary-foreground: #ffffff;
+  --secondary: #efe8df;
+  --secondary-foreground: #3d342d;
+  --muted: #f1ece6;
+  --muted-foreground: #6b5f55;
+  --accent: #ffd8a8;
+  --accent-foreground: #5c3d1f;
+  --destructive: #b42318;
+  --destructive-foreground: #ffffff;
+  --border: #e4ddd4;
+  --input: #e4ddd4;
+  --ring: #c8102e;
+}
+
+.dark {
+  --background: #14110f;
+  --foreground: #f7f2ec;
+  --card: #1d1916;
+  --card-foreground: #f7f2ec;
+  --primary: #ef5a73;
+  --primary-foreground: #1f1a17;
+  --secondary: #2a241f;
+  --secondary-foreground: #f7f2ec;
+  --muted: #241f1b;
+  --muted-foreground: #b9aea3;
+  --accent: #5c3d1f;
+  --accent-foreground: #ffd8a8;
+  --destructive: #f97066;
+  --destructive-foreground: #1f1a17;
+  --border: #342d27;
+  --input: #342d27;
+  --ring: #ef5a73;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html,
+  body,
+  #root {
+    @apply h-full overflow-hidden;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+.leaflet-container {
+  font: inherit;
+  background: var(--muted);
+}
+
+.leaflet-container .leaflet-popup-content-wrapper,
+.leaflet-container .leaflet-popup-tip {
+  background: var(--card);
+  color: var(--card-foreground);
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.25);
+}
+
+.leaflet-container .leaflet-popup-content-wrapper {
+  border-radius: 0.75rem;
+}
+
+.leaflet-container .leaflet-popup-content {
+  margin: 12px 14px;
+  line-height: 1.5;
+  color: var(--card-foreground);
+}
+
+.leaflet-container a.leaflet-popup-close-button {
+  color: var(--muted-foreground);
+  font-size: 18px;
+  padding: 8px 10px 0 0;
+}
+
+.leaflet-container a.leaflet-popup-close-button:hover,
+.leaflet-container a.leaflet-popup-close-button:focus {
+  color: var(--foreground);
+}
+
+.marker-cluster-small,
+.marker-cluster-medium,
+.marker-cluster-large {
+  background-color: rgb(200 16 46 / 0.28);
+}
+
+.marker-cluster-small div,
+.marker-cluster-medium div,
+.marker-cluster-large div {
+  background-color: rgb(200 16 46 / 0.95);
+  color: white;
+  font-weight: 700;
+  box-shadow:
+    0 0 0 2px rgb(255 255 255 / 0.95),
+    0 0 0 4px rgb(0 0 0 / 0.35);
+}
+
+.custom-marker {
+  background: var(--primary);
+  border: 3px solid rgb(255 255 255 / 0.95);
+  border-radius: 9999px;
+  box-shadow:
+    0 0 0 2px rgb(0 0 0 / 0.55),
+    0 3px 12px rgb(0 0 0 / 0.4);
+  width: 20px;
+  height: 20px;
+}
+
+.custom-marker.selected {
+  background: var(--primary);
+  border-color: rgb(255 255 255 / 0.95);
+  box-shadow:
+    0 0 0 3px rgb(0 0 0 / 0.65),
+    0 0 0 6px rgb(255 255 255 / 0.35),
+    0 4px 16px rgb(0 0 0 / 0.45);
+  width: 26px;
+  height: 26px;
+}
+
+.dark .custom-marker {
+  border-color: rgb(255 255 255 / 0.9);
+  box-shadow:
+    0 0 0 2px rgb(0 0 0 / 0.75),
+    0 3px 12px rgb(0 0 0 / 0.55);
+}
+
+.dark .custom-marker.selected {
+  box-shadow:
+    0 0 0 3px rgb(0 0 0 / 0.85),
+    0 0 0 6px rgb(255 255 255 / 0.25),
+    0 4px 16px rgb(0 0 0 / 0.6);
+}
