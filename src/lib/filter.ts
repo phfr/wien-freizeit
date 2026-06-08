@@ -46,7 +46,7 @@ export function filterLocations(
     }));
   }
 
-  if (filters.sort === 'distance' && userLocation) {
+  if (userLocation) {
     return sortByDistance(results);
   }
 

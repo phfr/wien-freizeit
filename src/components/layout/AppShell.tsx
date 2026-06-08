@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import {
   List,
   Loader2,
@@ -54,7 +54,6 @@ function SidebarContent({
   toggleCategory,
   clearPanelFilters,
   toggleFavoritesOnly,
-  setSort,
   userLocation,
   requestLocation,
   isLoadingLocation,
@@ -72,7 +71,6 @@ function SidebarContent({
   toggleCategory: ReturnType<typeof useFilters>['toggleCategory'];
   clearPanelFilters: ReturnType<typeof useFilters>['clearPanelFilters'];
   toggleFavoritesOnly: ReturnType<typeof useFilters>['toggleFavoritesOnly'];
-  setSort: ReturnType<typeof useFilters>['setSort'];
   userLocation: ReturnType<typeof useGeolocation>['userLocation'];
   requestLocation: ReturnType<typeof useGeolocation>['requestLocation'];
   isLoadingLocation: boolean;
@@ -105,15 +103,6 @@ function SidebarContent({
                 <MapIcon className="h-4 w-4" />
               )}
               In meiner Nähe
-            </Button>
-            <Button
-              type="button"
-              size="sm"
-              variant={filters.sort === 'distance' ? 'default' : 'outline'}
-              onClick={() => setSort(filters.sort === 'distance' ? 'name' : 'distance')}
-              disabled={!userLocation}
-            >
-              Nach Entfernung
             </Button>
           </div>
           {locationError && <p className="text-sm text-destructive">{locationError}</p>}
@@ -168,16 +157,9 @@ export function AppShell() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const hadUserLocation = useRef(false);
 
   useEffect(() => {
-    if (userLocation && !hadUserLocation.current) {
-      setSort('distance');
-      hadUserLocation.current = true;
-    }
-    if (!userLocation) {
-      hadUserLocation.current = false;
-    }
+    setSort(userLocation ? 'distance' : 'name');
   }, [userLocation, setSort]);
 
   const filteredLocations = useMemo(
@@ -222,7 +204,6 @@ export function AppShell() {
     toggleCategory,
     clearPanelFilters,
     toggleFavoritesOnly,
-    setSort,
     userLocation,
     requestLocation,
     isLoadingLocation,
@@ -293,6 +274,21 @@ export function AppShell() {
                   >
                     <List className="h-4 w-4" />
                     Liste ({filteredLocations.length})
+                  </Button>
+                  <Button
+                    type="button"
+                    size="icon"
+                    className="shrink-0"
+                    variant={userLocation ? 'default' : 'outline'}
+                    onClick={requestLocation}
+                    disabled={isLoadingLocation}
+                    aria-label="In meiner Nähe"
+                  >
+                    {isLoadingLocation ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <MapIcon className="h-4 w-4" />
+                    )}
                   </Button>
                   <ThemeToggle />
                 </div>
