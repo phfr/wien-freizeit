@@ -2,7 +2,7 @@ import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import {
   List,
   Loader2,
-  Map as MapIcon,
+  LocateFixed,
   Moon,
   SlidersHorizontal,
   Sun,
@@ -100,7 +100,7 @@ function SidebarContent({
               {isLoadingLocation ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
-                <MapIcon className="h-4 w-4" />
+                <LocateFixed className="h-4 w-4" />
               )}
               In meiner Nähe
             </Button>
@@ -254,26 +254,32 @@ export function AppShell() {
                   />
                   <Button
                     type="button"
-                    size="sm"
+                    size="icon"
                     className="shrink-0"
                     variant={filtersOpen ? 'default' : 'outline'}
                     onClick={toggleFiltersSheet}
                     aria-expanded={filtersOpen}
+                    aria-label={
+                      activeFilterCount > 0
+                        ? `Filter (${activeFilterCount} aktiv)`
+                        : 'Filter'
+                    }
                   >
                     <SlidersHorizontal className="h-4 w-4" />
-                    Filter
-                    {activeFilterCount > 0 && ` (${activeFilterCount})`}
                   </Button>
                   <Button
                     type="button"
-                    size="sm"
-                    className="shrink-0"
+                    size="icon"
+                    className="shrink-0 flex-col gap-0.5"
                     variant={mobileSheetOpen ? 'default' : 'outline'}
                     onClick={toggleListSheet}
                     aria-expanded={mobileSheetOpen}
+                    aria-label={`Standorte (${filteredLocations.length})`}
                   >
-                    <List className="h-4 w-4" />
-                    Liste ({filteredLocations.length})
+                    <List className="h-3.5 w-3.5" />
+                    <span className="text-[10px] font-medium leading-none tabular-nums">
+                      {filteredLocations.length}
+                    </span>
                   </Button>
                   <Button
                     type="button"
@@ -287,7 +293,7 @@ export function AppShell() {
                     {isLoadingLocation ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
-                      <MapIcon className="h-4 w-4" />
+                      <LocateFixed className="h-4 w-4" />
                     )}
                   </Button>
                   <ThemeToggle />
