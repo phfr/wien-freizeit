@@ -8,10 +8,10 @@ import {
   Sun,
   SunMoon,
 } from 'lucide-react';
+import { FilterCategoryCombobox } from '@/components/filters/FilterCategoryCombobox';
 import { SearchBar } from '@/components/filters/SearchBar';
 import { FilterPanel } from '@/components/filters/FilterPanel';
 import { SidebarSection } from '@/components/layout/SidebarSection';
-import { LocationDetail } from '@/components/sidebar/LocationDetail';
 import { LocationList } from '@/components/sidebar/LocationList';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
@@ -43,13 +43,11 @@ function ThemeToggle() {
 
 function SidebarContent({
   resultCount,
-  selectedLocation,
   filteredLocations,
   selectedId,
   favoriteIds,
   onSelect,
   onToggleFavorite,
-  onBack,
   filters,
   categoryGroups,
   setQuery,
@@ -63,13 +61,11 @@ function SidebarContent({
   locationError,
 }: {
   resultCount: number;
-  selectedLocation: ReturnType<typeof filterLocations>[number] | null;
   filteredLocations: ReturnType<typeof filterLocations>;
   selectedId: string | null;
   favoriteIds: Set<string>;
   onSelect: (id: string) => void;
   onToggleFavorite: (id: string) => void;
-  onBack: () => void;
   filters: ReturnType<typeof useFilters>['filters'];
   categoryGroups: ReturnType<typeof useLocations>['categoryGroups'];
   setQuery: ReturnType<typeof useFilters>['setQuery'];
@@ -92,11 +88,7 @@ function SidebarContent({
         <ThemeToggle />
       </div>
 
-      <SidebarSection
-        title="Suche"
-        description="Name, Bezirk (1160, Ottakring) oder Aktivität"
-        variant="surface"
-      >
+      <SidebarSection variant="surface">
         <div className="space-y-3">
           <SearchBar value={filters.query} onChange={setQuery} />
           <div className="flex flex-wrap items-center gap-2">
@@ -128,7 +120,7 @@ function SidebarContent({
         </div>
       </SidebarSection>
 
-      <SidebarSection title="Filter" description="Spielplatztypen & Ausstattung" variant="muted">
+      <SidebarSection variant="muted">
         <FilterPanel
           categoryGroups={categoryGroups}
           selectedCategories={filters.categories}
@@ -141,29 +133,16 @@ function SidebarContent({
 
       <SidebarSection
         title="Standorte"
-        description={
-          selectedLocation
-            ? selectedLocation.name
-            : `${resultCount} Spielplätze gefunden`
-        }
+        description={`${resultCount} Spielplätze gefunden`}
         variant="elevated"
       >
-        {selectedLocation ? (
-          <LocationDetail
-            location={selectedLocation}
-            isFavorite={favoriteIds.has(selectedLocation.id)}
-            onToggleFavorite={onToggleFavorite}
-            onBack={onBack}
-          />
-        ) : (
-          <LocationList
-            locations={filteredLocations}
-            selectedId={selectedId}
-            favoriteIds={favoriteIds}
-            onSelect={onSelect}
-            onToggleFavorite={onToggleFavorite}
-          />
-        )}
+        <LocationList
+          locations={filteredLocations}
+          selectedId={selectedId}
+          favoriteIds={favoriteIds}
+          onSelect={onSelect}
+          onToggleFavorite={onToggleFavorite}
+        />
       </SidebarSection>
     </div>
   );
@@ -182,7 +161,7 @@ export function AppShell() {
     resetFilters,
     activeFilterCount,
   } = useFilters();
-  const { favoriteIds, toggleFavorite, isFavorite } = useFavorites();
+  const { favoriteIds, toggleFavorite } = useFavorites();
   const { userLocation, requestLocation, isLoading: isLoadingLocation, error: locationError } =
     useGeolocation();
 
@@ -206,27 +185,37 @@ export function AppShell() {
     [locations, filters, favoriteIds, userLocation],
   );
 
-  const selectedLocation = useMemo(
-    () => filteredLocations.find((location) => location.id === selectedId) ?? null,
-    [filteredLocations, selectedId],
-  );
-
   const handleSelect = (id: string) => {
     setSelectedId(id);
     if (!isDesktop) {
-      setMobileSheetOpen(true);
+      setFiltersOpen(false);
+      setMobileSheetOpen(false);
     }
+  };
+
+  const toggleFiltersSheet = () => {
+    setFiltersOpen((open) => {
+      const next = !open;
+      if (next) setMobileSheetOpen(false);
+      return next;
+    });
+  };
+
+  const toggleListSheet = () => {
+    setMobileSheetOpen((open) => {
+      const next = !open;
+      if (next) setFiltersOpen(false);
+      return next;
+    });
   };
 
   const sidebarProps = {
     resultCount: filteredLocations.length,
-    selectedLocation,
     filteredLocations,
     selectedId,
     favoriteIds,
     onSelect: handleSelect,
     onToggleFavorite: toggleFavorite,
-    onBack: () => setSelectedId(null),
     filters,
     categoryGroups,
     setQuery,
@@ -261,21 +250,34 @@ export function AppShell() {
           <MapView
             locations={filteredLocations}
             selectedId={selectedId}
+            favoriteIds={favoriteIds}
             onSelect={handleSelect}
+            onToggleFavorite={toggleFavorite}
           />
         </Suspense>
 
         {!isDesktop && (
           <>
-            <div className="pointer-events-none absolute inset-x-0 top-0 z-[1000] flex flex-col gap-3 p-4">
-              <div className="pointer-events-auto rounded-2xl border border-border bg-background/95 p-3 shadow-lg backdrop-blur">
+            <div className="pointer-events-none absolute inset-x-0 top-0 z-[1100] px-3 pt-2 pb-1">
+              <div className="pointer-events-auto rounded-2xl border border-border bg-background/95 p-2.5 shadow-lg backdrop-blur">
                 <SearchBar value={filters.query} onChange={setQuery} />
-                <div className="mt-3 flex items-center gap-2">
+                <div className="mt-2 flex items-center gap-2">
+                  <FilterCategoryCombobox
+                    className="min-w-0 flex-1"
+                    compact
+                    categoryGroups={categoryGroups}
+                    selectedCategories={filters.categories}
+                    favoritesOnly={filters.favoritesOnly}
+                    onToggleCategory={toggleCategory}
+                    onClearAll={clearPanelFilters}
+                  />
                   <Button
                     type="button"
                     size="sm"
-                    variant="outline"
-                    onClick={() => setFiltersOpen(true)}
+                    className="shrink-0"
+                    variant={filtersOpen ? 'default' : 'outline'}
+                    onClick={toggleFiltersSheet}
+                    aria-expanded={filtersOpen}
                   >
                     <SlidersHorizontal className="h-4 w-4" />
                     Filter
@@ -284,8 +286,10 @@ export function AppShell() {
                   <Button
                     type="button"
                     size="sm"
-                    variant="outline"
-                    onClick={() => setMobileSheetOpen(true)}
+                    className="shrink-0"
+                    variant={mobileSheetOpen ? 'default' : 'outline'}
+                    onClick={toggleListSheet}
+                    aria-expanded={mobileSheetOpen}
                   >
                     <List className="h-4 w-4" />
                     Liste ({filteredLocations.length})
@@ -296,37 +300,24 @@ export function AppShell() {
             </div>
 
             <Sheet open={mobileSheetOpen} onOpenChange={setMobileSheetOpen}>
-              <SheetContent side="bottom" className="px-4 pb-8 pt-6">
-                <SheetHeader className="mb-4 text-left">
-                  <SheetTitle>
-                    {selectedLocation ? selectedLocation.name : 'Standorte'}
-                  </SheetTitle>
+              <SheetContent side="bottom" className="max-h-[92vh] overflow-y-auto px-4 pb-6 pt-3">
+                <SheetHeader className="mb-3 text-left">
+                  <SheetTitle>Standorte</SheetTitle>
                 </SheetHeader>
-                {selectedLocation ? (
-                  <LocationDetail
-                    location={selectedLocation}
-                    isFavorite={isFavorite(selectedLocation.id)}
-                    onToggleFavorite={toggleFavorite}
-                    onBack={() => setSelectedId(null)}
-                  />
-                ) : (
-                  <LocationList
-                    locations={filteredLocations}
-                    selectedId={selectedId}
-                    favoriteIds={favoriteIds}
-                    onSelect={handleSelect}
-                    onToggleFavorite={toggleFavorite}
-                  />
-                )}
+                <LocationList
+                  locations={filteredLocations}
+                  selectedId={selectedId}
+                  favoriteIds={favoriteIds}
+                  onSelect={handleSelect}
+                  onToggleFavorite={toggleFavorite}
+                />
               </SheetContent>
             </Sheet>
 
             <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}>
-              <SheetContent side="bottom" className="px-4 pb-8 pt-6">
-                <SheetHeader className="mb-4 text-left">
-                  <SheetTitle>Filter</SheetTitle>
-                </SheetHeader>
+              <SheetContent side="bottom" className="max-h-[92vh] overflow-y-auto px-4 pb-6 pt-3">
                 <FilterPanel
+                  showCombobox={false}
                   categoryGroups={categoryGroups}
                   selectedCategories={filters.categories}
                   favoritesOnly={filters.favoritesOnly}

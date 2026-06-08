@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
 interface SidebarSectionProps {
-  title: string;
+  title?: string;
   description?: string;
   action?: ReactNode;
   variant?: 'surface' | 'muted' | 'elevated';
@@ -24,6 +24,8 @@ export function SidebarSection({
   children,
   className,
 }: SidebarSectionProps) {
+  const showHeader = Boolean(title || description || action);
+
   return (
     <section
       className={cn(
@@ -32,15 +34,19 @@ export function SidebarSection({
         className,
       )}
     >
-      <div className="mb-3 flex items-start justify-between gap-3">
-        <div>
-          <h2 className="text-sm font-semibold tracking-tight">{title}</h2>
-          {description && (
-            <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>
-          )}
+      {showHeader && (
+        <div className="mb-3 flex items-start justify-between gap-3">
+          <div>
+            {title && <h2 className="text-sm font-semibold tracking-tight">{title}</h2>}
+            {description && (
+              <p className={cn('text-xs text-muted-foreground', title && 'mt-0.5')}>
+                {description}
+              </p>
+            )}
+          </div>
+          {action}
         </div>
-        {action}
-      </div>
+      )}
       {children}
     </section>
   );

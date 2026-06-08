@@ -8,7 +8,9 @@ import { getBoundsForLocations, getViennaCenter } from '@/lib/geo';
 interface MapViewProps {
   locations: Location[];
   selectedId: string | null;
+  favoriteIds: Set<string>;
   onSelect: (id: string) => void;
+  onToggleFavorite: (id: string) => void;
 }
 
 function MapController({
@@ -43,7 +45,13 @@ function MapController({
   return null;
 }
 
-export function MapView({ locations, selectedId, onSelect }: MapViewProps) {
+export function MapView({
+  locations,
+  selectedId,
+  favoriteIds,
+  onSelect,
+  onToggleFavorite,
+}: MapViewProps) {
   const center = getViennaCenter();
   const locationById = useMemo(
     () => new Map(locations.map((location) => [location.id, location])),
@@ -75,7 +83,9 @@ export function MapView({ locations, selectedId, onSelect }: MapViewProps) {
             key={location.id}
             location={location}
             isSelected={location.id === selectedId}
+            isFavorite={favoriteIds.has(location.id)}
             onSelect={onSelect}
+            onToggleFavorite={onToggleFavorite}
           />
         ))}
       </MarkerClusterGroup>

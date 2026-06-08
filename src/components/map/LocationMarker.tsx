@@ -1,13 +1,15 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import type { Location } from '@/types/location';
-import { Badge } from '@/components/ui/badge';
+import { LocationPopupContent } from '@/components/map/LocationPopupContent';
 
 interface LocationMarkerProps {
   location: Location;
   isSelected: boolean;
+  isFavorite: boolean;
   onSelect: (id: string) => void;
+  onToggleFavorite: (id: string) => void;
 }
 
 function createIcon(isSelected: boolean) {
@@ -21,11 +23,24 @@ function createIcon(isSelected: boolean) {
   });
 }
 
-export function LocationMarker({ location, isSelected, onSelect }: LocationMarkerProps) {
+export function LocationMarker({
+  location,
+  isSelected,
+  isFavorite,
+  onSelect,
+  onToggleFavorite,
+}: LocationMarkerProps) {
+  const markerRef = useRef<L.Marker>(null);
   const icon = useMemo(() => createIcon(isSelected), [isSelected]);
+
+  useEffect(() => {
+    if (!isSelected) return;
+    markerRef.current?.openPopup();
+  }, [isSelected]);
 
   return (
     <Marker
+      ref={markerRef}
       position={[location.lat, location.lng]}
       icon={icon}
       eventHandlers={{
@@ -33,17 +48,11 @@ export function LocationMarker({ location, isSelected, onSelect }: LocationMarke
       }}
     >
       <Popup className="map-popup">
-        <div className="min-w-[220px] space-y-2 text-card-foreground">
-          <h3 className="font-semibold text-foreground">{location.name}</h3>
-          <p className="text-sm text-muted-foreground">{location.description}</p>
-          <div className="flex flex-wrap gap-1">
-            {location.categories.slice(0, 6).map((category) => (
-              <Badge key={category} variant="secondary">
-                {category}
-              </Badge>
-            ))}
-          </div>
-        </div>
+        <LocationPopupContent
+          location={location}
+          isFavorite={isFavorite}
+          onToggleFavorite={onToggleFavorite}
+        />
       </Popup>
     </Marker>
   );

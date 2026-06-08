@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { FilterCategoryCombobox } from '@/components/filters/FilterCategoryCombobox';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { CategoryGroup, CategoryOption } from '@/types/location';
 
-const ACTIVITIES_INITIAL_VISIBLE = 8;
+const ACTIVITIES_INITIAL_VISIBLE = 24;
 const PLACE_TYPES_LABEL = 'Spielplatztypen';
 
 interface FilterPanelProps {
@@ -14,6 +15,7 @@ interface FilterPanelProps {
   onToggleCategory: (category: string) => void;
   onClearPanelFilters: () => void;
   onToggleFavoritesOnly: () => void;
+  showCombobox?: boolean;
 }
 
 function getVisibleCategories(
@@ -139,6 +141,7 @@ export function FilterPanel({
   onToggleCategory,
   onClearPanelFilters,
   onToggleFavoritesOnly,
+  showCombobox = true,
 }: FilterPanelProps) {
   const hasActivePanelFilters = selectedCategories.length > 0 || favoritesOnly;
 
@@ -165,13 +168,23 @@ export function FilterPanel({
         </Button>
       </div>
 
+      {showCombobox && (
+        <FilterCategoryCombobox
+          categoryGroups={categoryGroups}
+          selectedCategories={selectedCategories}
+          favoritesOnly={favoritesOnly}
+          onToggleCategory={onToggleCategory}
+          onClearAll={onClearPanelFilters}
+        />
+      )}
+
       {categoryGroups.map((group) => (
         <CategoryChipGroup
           key={group.label}
           group={group}
           selectedCategories={selectedCategories}
           onToggleCategory={onToggleCategory}
-          defaultOpen={group.label === PLACE_TYPES_LABEL}
+          defaultOpen={false}
           showAllChips={group.label === PLACE_TYPES_LABEL}
         />
       ))}

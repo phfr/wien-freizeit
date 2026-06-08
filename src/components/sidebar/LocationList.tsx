@@ -52,11 +52,6 @@ export function LocationList({
                   onClick={() => onSelect(location.id)}
                 >
                   <p className="truncate font-medium">{location.name}</p>
-                  {location.bezirk && (
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      {location.bezirk.number}. {location.bezirk.name} · {location.bezirk.postalCode}
-                    </p>
-                  )}
                   <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
                     {location.description}
                   </p>
